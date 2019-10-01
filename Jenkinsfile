@@ -1,7 +1,7 @@
 def mvnHome
 def remote = [:]
     	remote.name = 'deploy'
-    	remote.host = '192.168.33.10'
+    	remote.host = '192.168.33.20'
     	remote.user = 'root'
     	remote.password = 'vagrant'
     	remote.allowAnyHosts = true
@@ -13,19 +13,19 @@ pipeline {
 		//def mvnHome
 		stage ('Preparation') {
 		    agent {
-		        label 'slave'
+		        label 'Slave'
 		    }
 		    steps {
 			    git 'https://github.com/venkat09docs/Maven-Java-Project.git'
 			    stash 'Source'
 			    script{
-			        mvnHome = tool 'maven3'
+			        mvnHome = tool 'LocalMaven'
 			    }
 		    }
 		}
 		stage ('Static Analysis'){
 			agent {
-				label "slave"
+				label "Slave"
             }
 			steps {
 				sh "'${mvnHome}/bin/mvn' clean cobertura:cobertura"			
@@ -38,7 +38,7 @@ pipeline {
 		}
 		stage ('build'){
 			agent {
-				label "slave"
+				label "Slave"
             }
 			steps {
 				sh "'${mvnHome}/bin/mvn' clean package"			
@@ -53,18 +53,18 @@ pipeline {
 		}
 		stage('Deploy-to-Stage') {
 		     agent {
-		        label 'slave'
+		        label 'Slave'
 		    }
 		    //SSH-Steps-Plugin should be installed
 		    //SCP-Publisher Plugin (Optional)
 		    steps {
 		        //sshScript remote: remote, script: "abc.sh"  	
-			sshPut remote: remote, from: 'target/java-maven-1.0-SNAPSHOT.war', into: '/root/workspace/tomcat8/webapps'		        
+			sshPut remote: remote, from: 'target/java-maven-1.0-SNAPSHOT.war', into: '/workspace/appServer/webapps'		        
 		    }
     	}
     	stage ('Integration-Test') {
 			agent {
-				label "slave"
+				label "Slave"
             }
 			steps {
 				parallel (
@@ -79,9 +79,9 @@ pipeline {
 				)
 			}
 		}
-		stage ('approve') {
+		stage ('Approve') {
 			agent {
-				label "slave"
+				label "Slave"
             }
 			steps {
 				timeout(time: 7, unit: 'DAYS') {
@@ -91,7 +91,7 @@ pipeline {
 		}
 		stage ('Prod-Deploy') {
 			agent {
-				label "slave"
+				label "Slave"
             }
 			steps {
 				unstash 'Source'
