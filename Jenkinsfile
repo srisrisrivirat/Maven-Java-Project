@@ -1,7 +1,7 @@
 def mvnHome
 def remote = [:]
     	remote.name = 'deploy'
-    	remote.host = '192.168.33.17'
+    	remote.host = '192.168.33.20'
     	remote.user = 'root'
     	remote.password = 'vagrant'
     	remote.allowAnyHosts = true
@@ -59,7 +59,7 @@ pipeline {
 		    //SCP-Publisher Plugin (Optional)
 		    steps {
 		        //sshScript remote: remote, script: "abc.sh"  	
-			sshPut remote: remote, from: 'target/java-maven-1.0-SNAPSHOT.war', into: '/workspace/tomcat/webapps'		        
+			sshPut remote: remote, from: 'target/java-maven-1.0-SNAPSHOT.war', into: '/workspace/appServer/webapps'		        
 		    }
     	}
     	stage ('Integration-Test') {
@@ -85,7 +85,7 @@ pipeline {
             }
 			steps {
 				timeout(time: 7, unit: 'DAYS') {
-					input message: 'Do you want to deploy?', submitter: 'admin'
+					input message: 'Do you want to deploy?', submitter: 'administrator'
 				}
 			}
 		}
