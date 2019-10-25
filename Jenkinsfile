@@ -25,7 +25,7 @@ pipeline {
 		}
 		stage ('Static Analysis'){
 			agent {
-				label "Slave"
+				label "slave"
             }
 			steps {
 				sh "'${mvnHome}/bin/mvn' clean cobertura:cobertura"			
@@ -53,7 +53,7 @@ pipeline {
 		}
 		stage('Deploy-to-Stage') {
 		     agent {
-		        label 'Slave'
+		        label 'slave'
 		    }
 		    //SSH-Steps-Plugin should be installed
 		    //SCP-Publisher Plugin (Optional)
