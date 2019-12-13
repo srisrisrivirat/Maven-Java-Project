@@ -19,7 +19,7 @@ pipeline {
 			    git 'https://github.com/srisrisrivirat/Maven-Java-Project.git'
 			    stash 'Source'
 			    script{
-			        mvnHome = tool 'LocalMaven'
+			        mvnHome = tool 'Maven'
 			    }
 		    }
 		}
